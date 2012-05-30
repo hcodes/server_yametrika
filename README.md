@@ -37,32 +37,31 @@
 
 ## Как использовать
 Посещение страницы:
-`
-<?php
+
+    <?php
     //...
     include('yametrika.php');
 
     $counter = new YaMetrika(123456); // Номер счётчика Метрики
     $counter->hit('http://example.ru/archive.zip');
     //...
-?>
-`
+    ?>
+
 
 Загрузка файла:
-`
-<?php
+
+    <?php
     //...
     include('yametrika.php');
 
     $counter = new YaMetrika(123456); // Номер счётчика Метрики
     $counter->file('http://example.ru/archive.zip');
     //...
-?>
-`
+    ?>
 
 Какие программы используют посетители для чтения RSS:
-`
-<?php
+
+    <?php
     //...
     include('yametrika.php');
 
@@ -70,13 +69,12 @@
     // Просмотр статистики в отчёте "Параметры визитов", ветка RSS -> User Agent
     $counter->params(Array('RSS' => Array('User Agent' => $_SERVER['HTTP_USER_AGENT'])));
     //...
-?>
-`
+    ?>
 
 Слежка за роботами за скачкой robots.txt:
 Добавляем в корневой .htaccess строку "RewriteRule ^robots.txt$ robots.php" и создаём в корне файл robots.php с содержанием:
-`
-<?php
+
+    <?php
     require('yametrika.php');
 
     $counter = new YaMetrika(123456); // Номер счётчика Метрики
@@ -90,5 +88,4 @@
     header('Last-Modified: '.gmdate("D, d M Y H:i:s").' GMT');
     header('Content-Type: text/plain');
     print $txt;
-?>
-`
+    ?>
