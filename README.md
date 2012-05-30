@@ -1,6 +1,7 @@
 # Серверное отслеживание посетителей с помощью Яндекс.Метрики
 
 В некоторых случаях требуется отслеживать действия на стороне сервера без JavaScript.
+
 Например:
 + Слежка за поисковыми роботами
 + Редиректы
@@ -36,43 +37,43 @@
 
 ## Как использовать
 Посещение страницы:
-``&lt;?php
+`<?php
     //...
     include('yametrika.php');
 
     $counter = new YaMetrika(123456); // Номер счётчика Метрики
     $counter->hit('http://example.ru/archive.zip');
     //...
-?&gt;``
+?>`
 
 Загрузка файла:
-``&lt;?php
+`<?php
     //...
     include('yametrika.php');
 
     $counter = new YaMetrika(123456); // Номер счётчика Метрики
     $counter->file('http://example.ru/archive.zip');
     //...
-?&gt;``
+?>`
 
 Какие программы используют посетители для чтения RSS:
-``&lt;?php
+`<?php
     //...
     include('yametrika.php');
 
     $counter = new YaMetrika(123456); // Номер счётчика Метрики
-    // Просмотр статистики в отчёте "Параметры визитов", ветка RSS -&gt; User Agent
+    // Просмотр статистики в отчёте "Параметры визитов", ветка RSS -> User Agent
     $counter->params(Array('RSS' => Array('User Agent' => $_SERVER['HTTP_USER_AGENT'])));
     //...
-?&gt;``
+?>`
 
 Слежка за роботами за скачкой robots.txt:
 Добавляем в корневой .htaccess строку "RewriteRule ^robots.txt$ robots.php" и создаём в корне файл robots.php с содержанием:
-``&lt;?php
+`<?php
     require('yametrika.php');
 
     $counter = new YaMetrika(123456); // Номер счётчика Метрики
-    // Просмотр статистики в отчёте "Параметры визитов", ветка Robots.txt -&gt; User Agent
+    // Просмотр статистики в отчёте "Параметры визитов", ветка Robots.txt -> User Agent
     $counter->params(Array('Robots.txt' => Array('User Agent' => $_SERVER['HTTP_USER_AGENT'])));
 
     $txt = file_get_contents('robots.txt');
@@ -82,4 +83,4 @@
     header('Last-Modified: '.gmdate("D, d M Y H:i:s").' GMT');
     header('Content-Type: text/plain');
     print $txt;
-?&gt;``
+?>`
