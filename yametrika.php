@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
     http://webfilin.ru/notes/server_yametrika/
@@ -39,8 +39,6 @@
     // Не отказ
     $counter->notBounce();
 */
-
-require('json.php');
 
 class YaMetrika {
     private $serverHost = 'mc.yandex.ru';
