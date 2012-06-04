@@ -74,7 +74,7 @@ class YaMetrika {
     {
         if ($target)
         {
-            $target = 'goal://'.$target;
+            $target = 'goal://'.$_SERVER['HTTP_HOST'].'/'.$target;
             $referer = $this->currentPageUrl();
         }
         else
