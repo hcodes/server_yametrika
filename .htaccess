@@ -1,0 +1,5 @@
+php_value error_reporting 0
+php_value display_errors 0
+
+php_value auto_prepend_file none
+php_value auto_append_file none
