@@ -8,7 +8,6 @@
     Version: 1.0
     License: MIT, GNU PL
 
-
     Примеры использования:
     ======================
     
@@ -34,7 +33,7 @@
     $counter->file('http://example.ru/file.zip');
 
     // Отправка пользовательских параметров - отчёт "Параметры визитов"
-    $counter->params(Array('level1' => Array('level2' => 1)));
+    $counter->params(array('level1' => array('level2' => 1)));
 
     // Не отказ
     $counter->notBounce();
@@ -43,29 +42,32 @@
 class YaMetrika {
     private $serverHost = 'mc.yandex.ru';
     private $serverPath = '/watch/';
-    private $counterClass;
     
-    function __construct($counterId, $counterClass = 0)
+    private $counterId;
+    private $counterClass;
+    private $encoding;
+    
+    function __construct($counterId, $counterClass = 0, $encoding = 'utf-8')
     {
         $this->counterId = $counterId;
         $this->counterClass = $counterClass;
+        $this->encoding = $encoding;
     }
-
     
     // Отправка хита
     public function hit($pageUrl = null, $pageTitle = null, $pageRef = null, $userParams = '', $ut = '')
     {
-        if ($pageUrl === null)
+        if (is_null($pageUrl))
         {
             $pageUrl = $this->currentPageUrl();
         }
         
-        if ($pageRef === null)
+        if (is_null($pageRef))
         {
             $pageRef = $_SERVER['HTTP_REFERER'];
         }
 
-        $modes = Array('ut' => $ut);
+        $modes = array('ut' => $ut);
         $this->hitExt($pageUrl, $pageTitle, $pageRef, $userParams, $modes);
     }
     
@@ -91,7 +93,7 @@ class YaMetrika {
     {
         if ($url)
         {
-            $modes = Array('ln' => true, 'ut' => 'noindex');
+            $modes = array('ln' => true, 'ut' => 'noindex');
             $referer = $this->currentPageUrl();
             $this->hitExt($url, $title, $referer, null, $modes);
         }
@@ -102,7 +104,7 @@ class YaMetrika {
     {
         if ($file)
         {
-            $modes = Array('dl' => true, 'ln' => true);
+            $modes = array('dl' => true, 'ln' => true);
             $referer = $this->currentPageUrl();
             $this->hitExt($file, $title, $referer, null, $modes);
         }
@@ -111,7 +113,7 @@ class YaMetrika {
     // Не отказ
     public function notBounce()
     {
-        $modes = Array('nb' => true);
+        $modes = array('nb' => true);
         $this->hitExt('', '', '', null, $modes);
     }
     
@@ -120,15 +122,15 @@ class YaMetrika {
     {
         if ($data)
         {
-            $modes = Array('pa' => true);
+            $modes = array('pa' => true);
             $this->hitExt('', '', '', $data, $modes);
         }
     }
     
     // Общий метод для отправки хитов
-    private function hitExt($pageUrl = '', $pageTitle = '', $pageRef = '', $userParams = null, $modes = Array())
+    private function hitExt($pageUrl = '', $pageTitle = '', $pageRef = '', $userParams = null, $modes = array())
     {
-        $postData = Array();
+        $postData = array();
 
         if ($this->counterClass)
         {
@@ -151,10 +153,11 @@ class YaMetrika {
         }
         else 
         {
-            $modes = Array('ar' => true);
+            $modes = array('ar' => true);
         }
+        
 
-        $bi = Array();
+        $browser_info = array();
         if ($modes and count($modes))
         {   
             foreach($modes as $key => $value)
@@ -166,17 +169,19 @@ class YaMetrika {
                         $value = 1;
                     }
                     
-                    $bi[] = $key.':'.$value;
+                    $browser_info[] = $key.':'.$value;
                 }
             }
         }
+        
+        $browser_info[] = 'en:'.$this->encoding;
 
         if ($pageTitle)
         {
-            $bi[] = 't:'.urlencode($pageTitle);
+            $browser_info[] = 't:'.urlencode($pageTitle);
         }
         
-        $postData['browser-info'] = implode(':', $bi);
+        $postData['browser-info'] = implode(':', $browser_info);
 
         
         if ($userParams)
@@ -213,7 +218,7 @@ class YaMetrika {
     // Построение переменных в запросе
     private function buildQueryVars($queryVars)
     { 
-        $queryBits = Array();
+        $queryBits = array();
         while (list($var, $value) = each($queryVars))
         { 
             $queryBits[] = $var.'='.$value; 
@@ -284,7 +289,7 @@ if (!function_exists('json_encode'))
             if( $islist ) {
                 $json = '[' . implode(',', array_map('json_encode', $data) ) . ']';
             } else {
-                $items = Array();
+                $items = array();
                 foreach( $data as $key => $value ) {
                     $items[] = json_encode("$key") . ':' . json_encode($value);
                 }
