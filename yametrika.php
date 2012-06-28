@@ -16,6 +16,7 @@
     
     // Отправка хита
     $counter->hit('http://example.ru', 'Main page', 'http://ya.ru');
+    $counter->hit('/index.html', 'Main page', '/back.html');
 
     // Отправка хита вместе с пользовательскими параметрами
     $counter->hit('http://example.ru', 'Main page', 'http://ya.ru', $myParams);
@@ -31,17 +32,22 @@
     
     // Загрузка файла - отчёт "Загрузка файлов"
     $counter->file('http://example.ru/file.zip');
+    $counter->file('/file.zip');
 
     // Отправка пользовательских параметров - отчёт "Параметры визитов"
     $counter->params(array('level1' => array('level2' => 1)));
 
     // Не отказ
     $counter->notBounce();
+
+    // http-ошибка
+    $counter->httpError(404, '/404.html', 'Ошибка 404');
 */
 
 class YaMetrika {
-    private $serverHost = 'mc.yandex.ru';
-    private $serverPath = '/watch/';
+    const HOST = 'mc.yandex.ru';
+    const PATH = '/watch/';
+    const PORT = 80;
     
     private $counterId;
     private $counterClass;
@@ -57,15 +63,21 @@ class YaMetrika {
     // Отправка хита
     public function hit($pageUrl = null, $pageTitle = null, $pageRef = null, $userParams = '', $ut = '')
     {
+        $currentUrl = $this->currentPageUrl();
+        $referer = $_SERVER['HTTP_REFERER'];
+        
         if (is_null($pageUrl))
         {
-            $pageUrl = $this->currentPageUrl();
+            $pageUrl = $currentUrl;
         }
         
         if (is_null($pageRef))
         {
-            $pageRef = $_SERVER['HTTP_REFERER'];
+            $pageRef = $referer;
         }
+        
+        $pageUrl = $this->absoluteUrl($pageUrl, $currentUrl);
+        $pageRef = $this->absoluteUrl($pageRef, $currentUrl);
 
         $modes = array('ut' => $ut);
         $this->hitExt($pageUrl, $pageTitle, $pageRef, $userParams, $modes);
@@ -104,9 +116,10 @@ class YaMetrika {
     {
         if ($file)
         {
+            $currentUrl = $this->currentPageUrl();
             $modes = array('dl' => true, 'ln' => true);
-            $referer = $this->currentPageUrl();
-            $this->hitExt($file, $title, $referer, null, $modes);
+            $file = $this->absoluteUrl($file, $currentUrl);
+            $this->hitExt($file, $title, $currentUrl, null, $modes);
         }
     }
     
@@ -124,6 +137,25 @@ class YaMetrika {
         {
             $modes = array('pa' => true);
             $this->hitExt('', '', '', $data, $modes);
+        }
+    }
+
+    // http-ошибка
+    public function httpError($code, $url, $title = '', $referer)
+    {
+        if ($code && $url)
+        {
+            if (is_null($referer))
+            {
+                $referer = $_SERVER['HTTP_REFERER'];
+            }
+        
+            $currentUrl = $this->currentPageUrl();
+            $url = $this->absoluteUrl($url, $currentUrl);
+            $referer = $this->absoluteUrl($referer, $currentUrl);
+
+            $modes = array('he' => $code);
+            $this->hitExt($url, $title, $referer, null, $modes);
         }
     }
     
@@ -156,7 +188,6 @@ class YaMetrika {
             $modes = array('ar' => true);
         }
         
-
         $browser_info = array();
         if ($modes and count($modes))
         {   
@@ -195,9 +226,9 @@ class YaMetrika {
             $postData['ut'] = $modes['ut'];
         }
 
-        $getQuery = $this->serverPath.$this->counterId.'/1?rn='.rand(0, 100000).'&wmode=2';
+        $getQuery = self::PATH.$this->counterId.'/1?rn='.rand(0, 100000).'&wmode=2';
         
-        $this->postRequest($this->serverHost, $getQuery, $this->buildQueryVars($postData));
+        $this->postRequest(self::HOST, $getQuery, $this->buildQueryVars($postData));
     }
     
     // Текущий URL
@@ -213,7 +244,33 @@ class YaMetrika {
         $pageUrl = $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
         return $pageUrl;
-    }    
+    }
+
+    // Преобразование из относительного в абсолютный url
+    private function absoluteUrl($url, $baseUrl) {
+        if (!$url) {
+            return '';
+        }
+       
+        $parseUrl = parse_url($url);
+        $base = parse_url($baseUrl);
+        $hostUrl = $base['scheme']."://".$base['host'];
+       
+        if ($parseUrl['scheme'])
+        {
+            $absUrl = $url;
+        }
+        elseif ($parseUrl['host'])
+        {
+            $absUrl = "http://" . $url;
+        }
+        else
+        {
+            $absUrl = $hostUrl . $url;
+        }
+       
+        return $absUrl;
+    }
     
     // Построение переменных в запросе
     private function buildQueryVars($queryVars)
@@ -244,10 +301,10 @@ class YaMetrika {
         $errno = '';
         $errstr = '';
         $result = '';
-        
+
         try
         {
-            $socket = @fsockopen($host, 80, $errno, $errstr, 3);
+            $socket = @fsockopen($host, self::PORT, $errno, $errstr, 3);
             if ($socket)
             {
                 if (!fwrite($socket, $out))
