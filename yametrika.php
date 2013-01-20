@@ -39,9 +39,6 @@
 
     // Не отказ
     $counter->notBounce();
-
-    // http-ошибка
-    $counter->httpError(404, '/404.html', 'Ошибка 404');
 */
 
 class YaMetrika {
@@ -140,25 +137,6 @@ class YaMetrika {
         }
     }
 
-    // http-ошибка
-    public function httpError($code, $url, $title = '', $referer)
-    {
-        if ($code && $url)
-        {
-            if (is_null($referer))
-            {
-                $referer = $_SERVER['HTTP_REFERER'];
-            }
-        
-            $currentUrl = $this->currentPageUrl();
-            $url = $this->absoluteUrl($url, $currentUrl);
-            $referer = $this->absoluteUrl($referer, $currentUrl);
-
-            $modes = array('he' => $code);
-            $this->hitExt($url, $title, $referer, null, $modes);
-        }
-    }
-    
     // Общий метод для отправки хитов
     private function hitExt($pageUrl = '', $pageTitle = '', $pageRef = '', $userParams = null, $modes = array())
     {
