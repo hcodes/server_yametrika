@@ -91,3 +91,11 @@
     header('Content-Type: text/plain');
     print $txt;
     ?>
+
+## Полезные ссылки
++ [Версия для Node.js](https://github.com/hcodes/server_yametrika_nodejs/)
++ [Помощь Яндекс.Метрики](https://help.yandex.ru/metrika/)
+
+
+## Лицензия
+MIT License
