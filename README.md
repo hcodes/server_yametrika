@@ -49,6 +49,16 @@
     //...
     ?>
 
+Достижение цели:
+
+    <?php
+    //...
+    include('yametrika.php');
+
+    $counter = new YaMetrika(123456); // Номер счётчика Метрики
+    $counter->reachGoal('submit');
+    //...
+    ?>
 
 Загрузка файла:
 
