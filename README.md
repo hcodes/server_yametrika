@@ -57,6 +57,7 @@ $counter->hit('http://example.ru/archive.zip');
 include('yametrika.php');
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики
+$counter->hit() // Вызов метода необходим для корректной привязки цели к визиту
 $counter->reachGoal('submit');
 //...
 ?>
