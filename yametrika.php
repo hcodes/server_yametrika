@@ -5,7 +5,7 @@
     
     Author: Seleznev Denis, hcodes@yandex.ru
     Description: Серверная отправка хитов с помощью PHP в Яндекс.Метрику
-    Version: 1.0
+    Version: 1.0.1
     License: MIT, GNU PL
 
     Примеры использования:
@@ -42,7 +42,7 @@
 */
 
 class YaMetrika {
-    const HOST = 'mc.yandex.ru';
+    const HOST = 'bs.yandex.ru';
     const PATH = '/watch/';
     const PORT = 80;
     
