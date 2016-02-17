@@ -1,11 +1,9 @@
 <?php
 
 /*
-    http://webfilin.ru/notes/server_yametrika/
-
     Author: Seleznev Denis, hcodes@yandex.ru
     Description: Серверная отправка хитов с помощью PHP в Яндекс.Метрику
-    Version: 1.0.1
+    Version: 1.0.2
     License: MIT, GNU PL
 
     Примеры использования:
@@ -42,9 +40,9 @@
 */
 
 class YaMetrika {
-    const HOST = 'bs.yandex.ru';
+    const HOST = 'mc.yandex.ru';
     const PATH = '/watch/';
-    const PORT = 80;
+    const PORT = 443;
 
     private $counterId;
     private $counterClass;
@@ -232,7 +230,7 @@ class YaMetrika {
 
         $parseUrl = parse_url($url);
         $base = parse_url($baseUrl);
-        $hostUrl = $base['scheme']."://".$base['host'];
+        $hostUrl = $base['scheme'].'://'.$base['host'];
 
         if ($parseUrl['scheme'])
         {
@@ -240,7 +238,7 @@ class YaMetrika {
         }
         elseif ($parseUrl['host'])
         {
-            $absUrl = "http://" . $url;
+            $absUrl = 'http://'.$url;
         }
         else
         {
@@ -282,7 +280,7 @@ class YaMetrika {
 
         try
         {
-            $socket = @fsockopen($host, self::PORT, $errno, $errstr, 3);
+            $socket = @fsockopen('ssl://'.$host, self::PORT, $errno, $errstr, 3);             
             if ($socket)
             {
                 if (!fwrite($socket, $out))
@@ -343,7 +341,7 @@ if (!function_exists('json_encode'))
                 $c1 = ord($char);
 
                 # Single byte;
-                if( $c1 <128 ) {
+                if( $c1 < 128 ) {
                     $json .= ($c1 > 31) ? $char : sprintf("\\u%04x", $c1);
                     continue;
                 }
@@ -365,10 +363,10 @@ if (!function_exists('json_encode'))
                 # Quadruple
                 $c4 = ord($string[++$i]);
                 if( ($c1 & 8 ) === 0 ) {
-                    $u = (($c1 & 15) << 2) + (($c2>>4) & 3) - 1;
+                    $u = (($c1 & 15) << 2) + (($c2 >> 4) & 3) - 1;
 
-                    $w1 = (54<<10) + ($u<<6) + (($c2 & 15) << 2) + (($c3>>4) & 3);
-                    $w2 = (55<<10) + (($c3 & 15)<<6) + ($c4-128);
+                    $w1 = (54 << 10) + ($u << 6) + (($c2 & 15) << 2) + (($c3 >> 4) & 3);
+                    $w2 = (55 << 10) + (($c3 & 15) << 6) + ($c4 - 128);
                     $json .= sprintf("\\u%04x\\u%04x", $w1, $w2);
                 }
             }
