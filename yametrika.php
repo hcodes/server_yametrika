@@ -267,7 +267,7 @@ class YaMetrika {
 
         $out  = "POST $path HTTP/1.1\r\n";
         $out .= "Host: $host\r\n";
-        $out .= "X-Real-IP: ".$_SERVER['REMOTE_ADDR']."\r\n";
+        $out .= "X-Forwarded-For: ".$_SERVER['REMOTE_ADDR']."\r\n";
         $out .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
         $out .= "Content-type: application/x-www-form-urlencoded\r\n";
         $out .= "Content-length: $dataLen\r\n";
@@ -280,7 +280,7 @@ class YaMetrika {
 
         try
         {
-            $socket = @fsockopen('ssl://'.$host, self::PORT, $errno, $errstr, 3);             
+            $socket = @fsockopen('ssl://'.$host, self::PORT, $errno, $errstr, 3);
             if ($socket)
             {
                 if (!fwrite($socket, $out))
