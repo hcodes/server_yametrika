@@ -59,7 +59,7 @@ class YaMetrika {
     public function hit($pageUrl = null, $pageTitle = null, $pageRef = null, $userParams = '', $ut = '')
     {
         $currentUrl = $this->currentPageUrl();
-        $referer = $_SERVER['HTTP_REFERER'];
+        $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 
         if (is_null($pageUrl))
         {
@@ -83,13 +83,14 @@ class YaMetrika {
     {
         if ($target)
         {
-            $target = 'goal://'.$_SERVER['HTTP_HOST'].'/'.$target;
+            $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+            $target = 'goal://'.$host.'/'.$target;
             $referer = $this->currentPageUrl();
         }
         else
         {
             $target = $this->currentPageUrl();
-            $referer = $_SERVER['HTTP_REFERER'];
+            $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
         }
 
         $this->hitExt($target, null, $referer, $userParams, null);
@@ -197,7 +198,7 @@ class YaMetrika {
             $postData['site-info'] = urlencode($up);
         }
 
-        if ($modes['ut'])
+        if (isset($modes['ut']))
         {
             $postData['ut'] = $modes['ut'];
         }
@@ -212,12 +213,16 @@ class YaMetrika {
     {
         $protocol = 'http://';
 
-        if ($_SERVER['HTTPS'])
+        if (isset($_SERVER['HTTPS']))
         {
             $protocol = 'https://';
         }
 
-        $pageUrl = $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+
+        $pageUrl = $protocol.$host.$request_uri;
 
         return $pageUrl;
     }
@@ -230,6 +235,11 @@ class YaMetrika {
 
         $parseUrl = parse_url($url);
         $base = parse_url($baseUrl);
+
+        if (!$parseUrl || !$base) {
+            return '';
+        }
+
         $hostUrl = $base['scheme'].'://'.$base['host'];
 
         if ($parseUrl['scheme'])
@@ -252,9 +262,9 @@ class YaMetrika {
     private function buildQueryVars($queryVars)
     {
         $queryBits = array();
-        while (list($var, $value) = each($queryVars))
-        {
-            $queryBits[] = $var.'='.$value;
+
+        foreach($queryVars as $key => $value) {
+            $queryBits[] = $key.'='.$value;
         }
 
         return (implode('&', $queryBits));
@@ -267,8 +277,15 @@ class YaMetrika {
 
         $out  = "POST $path HTTP/1.1\r\n";
         $out .= "Host: $host\r\n";
-        $out .= "X-Forwarded-For: ".$_SERVER['REMOTE_ADDR']."\r\n";
-        $out .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
+
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            $out .= "X-Forwarded-For: ".$_SERVER['REMOTE_ADDR']."\r\n";
+        }
+
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            $out .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
+        }
+
         $out .= "Content-type: application/x-www-form-urlencoded\r\n";
         $out .= "Content-length: $dataLen\r\n";
         $out .= "Connection: close\r\n\r\n";
