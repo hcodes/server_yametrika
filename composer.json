@@ -14,5 +14,13 @@
     ],  
     "require": {
         "php": ">=5.6"
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "ServerYaMetrika\\": "src"
+        }
     }
 }
