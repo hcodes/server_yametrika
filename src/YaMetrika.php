@@ -24,38 +24,33 @@ class YaMetrika {
     }
 
     // Отправка хита
-    public function hit($pageUrl = null, $pageTitle = null, $pageRef = null, $userParams = '', $ut = '')
+    public function hit($pageUrl = null, $pageTitle = null, $pageRef = null, $userParams = null, $ut = '')
     {
         $currentUrl = $this->currentPageUrl();
         $referer = $_SERVER['HTTP_REFERER'];
 
-        if (is_null($pageUrl))
-        {
+        if (is_null($pageUrl)) {
             $pageUrl = $currentUrl;
         }
 
-        if (is_null($pageRef))
-        {
+        if (is_null($pageRef)) {
             $pageRef = $referer;
         }
 
         $pageUrl = $this->absoluteUrl($pageUrl, $currentUrl);
         $pageRef = $this->absoluteUrl($pageRef, $currentUrl);
 
-        $modes = array('ut' => $ut);
+        $modes = ['ut' => $ut];
         $this->hitExt($pageUrl, $pageTitle, $pageRef, $userParams, $modes);
     }
 
     // Достижение цели
     public function reachGoal($target = '', $userParams = null)
     {
-        if ($target)
-        {
-            $target = 'goal://'.$_SERVER['HTTP_HOST'].'/'.$target;
+        if ($target) {
+            $target = 'goal://' . $_SERVER['HTTP_HOST'] . '/' . $target;
             $referer = $this->currentPageUrl();
-        }
-        else
-        {
+        } else {
             $target = $this->currentPageUrl();
             $referer = $_SERVER['HTTP_REFERER'];
         }
@@ -66,9 +61,8 @@ class YaMetrika {
     // Внешняя ссылка
     public function extLink($url = '', $title = '')
     {
-        if ($url)
-        {
-            $modes = array('ln' => true, 'ut' => 'noindex');
+        if ($url) {
+            $modes = ['ln' => true, 'ut' => 'noindex'];
             $referer = $this->currentPageUrl();
             $this->hitExt($url, $title, $referer, null, $modes);
         }
@@ -77,10 +71,9 @@ class YaMetrika {
     // Загрузка файла
     public function file($file = '', $title = '')
     {
-        if ($file)
-        {
+        if ($file) {
             $currentUrl = $this->currentPageUrl();
-            $modes = array('dl' => true, 'ln' => true);
+            $modes = ['dl' => true, 'ln' => true];
             $file = $this->absoluteUrl($file, $currentUrl);
             $this->hitExt($file, $title, $currentUrl, null, $modes);
         }
@@ -89,88 +82,74 @@ class YaMetrika {
     // Не отказ
     public function notBounce()
     {
-        $modes = array('nb' => true);
+        $modes = ['nb' => true];
         $this->hitExt('', '', '', null, $modes);
     }
 
     // Параметры визитов
     public function params($data)
     {
-        if ($data)
-        {
-            $modes = array('pa' => true);
+        if ($data) {
+            $modes = ['pa' => true];
             $this->hitExt('', '', '', $data, $modes);
         }
     }
 
     // Общий метод для отправки хитов
-    private function hitExt($pageUrl = '', $pageTitle = '', $pageRef = '', $userParams = null, $modes = array())
+    private function hitExt($pageUrl = '', $pageTitle = '', $pageRef = '', $userParams = null, $modes = [])
     {
-        $postData = array();
+        $postData = [];
 
-        if ($this->counterClass)
-        {
+        if ($this->counterClass) {
             $postData['cnt-class'] = $this->counterClass;
         }
 
-        if ($pageUrl)
-        {
+        if ($pageUrl) {
             $postData['page-url'] = urlencode($pageUrl);
         }
 
-        if ($pageRef)
-        {
+        if ($pageRef) {
             $postData['page-ref'] = urlencode($pageRef);
         }
 
-        if ($modes)
-        {
+        if ($modes) {
             $modes['ar'] = true;
-        }
-        else
-        {
-            $modes = array('ar' => true);
+        } else {
+            $modes = ['ar' => true];
         }
 
-        $browser_info = array();
-        if ($modes and count($modes))
-        {
-            foreach($modes as $key => $value)
-            {
-                if ($value and $key != 'ut')
-                {
-                    if ($value === true)
-                    {
+        $browser_info = [];
+        if ($modes && count($modes)) {
+            foreach($modes as $key => $value) {
+                if ($value and $key != 'ut') {
+                    if ($value === true) {
                         $value = 1;
                     }
 
-                    $browser_info[] = $key.':'.$value;
+                    $browser_info[] = $key . ':' . $value;
                 }
             }
         }
 
-        $browser_info[] = 'en:'.$this->encoding;
+        $browser_info[] = 'en:' . $this->encoding;
 
-        if ($pageTitle)
-        {
-            $browser_info[] = 't:'.urlencode($pageTitle);
+        if ($pageTitle) {
+            $browser_info[] = 't:' . urlencode($pageTitle);
         }
 
         $postData['browser-info'] = implode(':', $browser_info);
 
 
-        if ($userParams)
-        {
+        if ($userParams) {
             $up = json_encode($userParams);
             $postData['site-info'] = urlencode($up);
         }
 
-        if ($modes['ut'])
-        {
+        if ($modes['ut']) {
             $postData['ut'] = $modes['ut'];
         }
 
-        $getQuery = self::PATH.$this->counterId.'/1?rn='.rand(0, 100000).'&wmode=2';
+        $getQuery = self::PATH . $this->counterId . '/1?rn=' . rand(0, 1000000) . '&wmode=2';
 
         $this->postRequest(self::HOST, $getQuery, $this->buildQueryVars($postData));
     }
@@ -180,12 +159,11 @@ class YaMetrika {
     {
         $protocol = 'http://';
 
-        if ($_SERVER['HTTPS'])
-        {
+        if ($_SERVER['HTTPS']) {
             $protocol = 'https://';
         }
 
-        $pageUrl = $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $pageUrl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         return $pageUrl;
     }
@@ -198,18 +176,13 @@ class YaMetrika {
 
         $parseUrl = parse_url($url);
         $base = parse_url($baseUrl);
-        $hostUrl = $base['scheme'].'://'.$base['host'];
+        $hostUrl = $base['scheme'] . '://' . $base['host'];
 
-        if ($parseUrl['scheme'])
-        {
+        if ($parseUrl['scheme']) {
             $absUrl = $url;
-        }
-        elseif ($parseUrl['host'])
-        {
-            $absUrl = 'http://'.$url;
-        }
-        else
-        {
+        } elseif ($parseUrl['host']) {
+            $absUrl = 'http://' . $url;
+        } else {
             $absUrl = $hostUrl . $url;
         }
 
@@ -219,10 +192,9 @@ class YaMetrika {
     // Построение переменных в запросе
     private function buildQueryVars($queryVars)
     {
-        $queryBits = array();
-        while (list($var, $value) = each($queryVars))
-        {
-            $queryBits[] = $var.'='.$value;
+        $queryBits = [];
+        while (list($var, $value) = each($queryVars)) {
+            $queryBits[] = $var . '=' . $value;
         }
 
         return (implode('&', $queryBits));
@@ -233,46 +205,36 @@ class YaMetrika {
     {
         $dataLen = strlen($dataToSend);
 
-        $out  = "POST $path HTTP/1.1\r\n";
-        $out .= "Host: $host\r\n";
-        $out .= "X-Forwarded-For: ".$_SERVER['REMOTE_ADDR']."\r\n";
-        $out .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
-        $out .= "Content-type: application/x-www-form-urlencoded\r\n";
-        $out .= "Content-length: $dataLen\r\n";
-        $out .= "Connection: close\r\n\r\n";
+        $out  = 'POST ' . $path . ' HTTP/1.1\r\n';
+        $out .= 'Host: ' . $host . '\r\n';
+        $out .= 'X-Forwarded-For: ' . $_SERVER['REMOTE_ADDR'] . '\r\n';
+        $out .= 'User-Agent: ' . $_SERVER['HTTP_USER_AGENT'] . '\r\n';
+        $out .= 'Content-type: application/x-www-form-urlencoded\r\n';
+        $out .= 'Content-length: ' . $dataLen . '\r\n';
+        $out .= 'Connection: close\r\n\r\n';
         $out .= $dataToSend;
 
         $errno = '';
         $errstr = '';
         $result = '';
 
-        try
-        {
-            $socket = @fsockopen('ssl://'.$host, self::PORT, $errno, $errstr, 3);
-            if ($socket)
-            {
-                if (!fwrite($socket, $out))
-                {
-                    throw new Exception("unable to write");
-                }
-                else
-                {
-                    while ($in = @fgets($socket, 1024))
-                    {
+        try {
+            $socket = @fsockopen('ssl://' . $host, self::PORT, $errno, $errstr, 3);
+            if ($socket) {
+                if (!fwrite($socket, $out)) {
+                    throw new Exception('unable to write');
+                } else {
+                    while ($in = @fgets($socket, 1024)) {
                         $result .= $in;
                     }
                 }
 
                 fclose($socket);
-            }
-            else
-            {
-                throw new Exception("unable to create socket");
+            } else {
+                throw new Exception('unable to create socket');
             }
 
-        }
-        catch (exception $e)
-        {
+        } catch (exception $e) {
             return false;
         }
 
