@@ -7,6 +7,8 @@
     License: MIT
 */
 
+namespace ServerYaMetrika;
+
 class YaMetrika {
     const HOST = 'mc.yandex.ru';
     const PATH = '/watch/';
@@ -27,7 +29,7 @@ class YaMetrika {
     public function hit($pageUrl = null, $pageTitle = null, $pageRef = null, $userParams = null, $ut = '')
     {
         $currentUrl = $this->currentPageUrl();
-        $referer = $_SERVER['HTTP_REFERER'];
+        $referer = $this->getServerParam('HTTP_REFERER');
 
         if (is_null($pageUrl)) {
             $pageUrl = $currentUrl;
@@ -49,11 +51,11 @@ class YaMetrika {
     public function reachGoal($target = '', $userParams = null)
     {
         if ($target) {
-            $target = 'goal://' . $_SERVER['HTTP_HOST'] . '/' . $target;
+            $target = 'goal://' . $this->getServerParam('HTTP_HOST') . '/' . $target;
             $referer = $this->currentPageUrl();
         } else {
             $target = $this->currentPageUrl();
-            $referer = $_SERVER['HTTP_REFERER'];
+            $referer = $this->getServerParam('HTTP_REFERER');
         }
 
         return $this->hitExt($target, null, $referer, $userParams, null);
@@ -106,7 +108,11 @@ class YaMetrika {
         return false;
     }
 
-    // Общий метод для отправки хитов
+    private getServerParam($name)
+    {
+        return isset($_SERVER[$name]) ? $_SERVER[$name] : '';
+    }
+
     private function hitExt($pageUrl = '', $pageTitle = '', $pageRef = '', $userParams = null, $modes = [])
     {
         $postData = [];
@@ -164,21 +170,19 @@ class YaMetrika {
         return $this->postRequest(self::HOST, $getQuery, $this->buildQueryVars($postData));
     }
 
-    // Текущий URL
     private function currentPageUrl()
     {
         $protocol = 'http://';
 
-        if ($_SERVER['HTTPS']) {
+        if ($this->getServerParam('HTTPS')) {
             $protocol = 'https://';
         }
 
-        $pageUrl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $pageUrl = $protocol . $this->getServerParam('HTTP_HOST') . $this->getServerParam('REQUEST_URI');
 
         return $pageUrl;
     }
 
-    // Преобразование из относительного в абсолютный url
     private function absoluteUrl($url, $baseUrl) {
         if (!$url) {
             return '';
@@ -186,6 +190,11 @@ class YaMetrika {
 
         $parseUrl = parse_url($url);
         $base = parse_url($baseUrl);
+
+        if (!$parseUrl || !$base) {
+            return '';
+        }
+
         $hostUrl = $base['scheme'] . '://' . $base['host'];
 
         if ($parseUrl['scheme']) {
@@ -199,26 +208,34 @@ class YaMetrika {
         return $absUrl;
     }
 
-    // Построение переменных в запросе
     private function buildQueryVars($queryVars)
     {
         $queryBits = [];
-        while (list($var, $value) = each($queryVars)) {
-            $queryBits[] = $var . '=' . $value;
+
+        foreach($queryVars as $key => $value) {
+            $queryBits[] = $key . '=' . $value;
         }
 
         return (implode('&', $queryBits));
     }
 
-    // Отправка POST-запроса
     private function postRequest($host, $path, $dataToSend)
     {
         $dataLen = strlen($dataToSend);
 
         $out = 'POST ' . $path . ' HTTP/1.1\r\n';
         $out .= 'Host: ' . $host . '\r\n';
-        $out .= 'X-Forwarded-For: ' . $_SERVER['REMOTE_ADDR'] . '\r\n';
-        $out .= 'User-Agent: ' . $_SERVER['HTTP_USER_AGENT'] . '\r\n';
+
+        $ip = $this->getServerParam('REMOTE_ADDR'); 
+        if ($ip) {
+            $out .= 'X-Forwarded-For: ' . $ip . '\r\n';
+        }
+
+        $ua = $this->getServerParam('HTTP_USER_AGENT'); 
+        if ($ua) {
+            $out .= 'User-Agent: ' . $ua . '\r\n';
+        }
+        
         $out .= 'Content-type: application/x-www-form-urlencoded\r\n';
         $out .= 'Content-length: ' . $dataLen . '\r\n';
         $out .= 'Connection: close\r\n\r\n';
@@ -244,7 +261,7 @@ class YaMetrika {
                 throw new Exception('unable to create socket');
             }
 
-        } catch (exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 
