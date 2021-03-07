@@ -41,7 +41,8 @@ class YaMetrika {
         $pageRef = $this->absoluteUrl($pageRef, $currentUrl);
 
         $modes = ['ut' => $ut];
-        $this->hitExt($pageUrl, $pageTitle, $pageRef, $userParams, $modes);
+
+        return $this->hitExt($pageUrl, $pageTitle, $pageRef, $userParams, $modes);
     }
 
     // Достижение цели
@@ -55,7 +56,7 @@ class YaMetrika {
             $referer = $_SERVER['HTTP_REFERER'];
         }
 
-        $this->hitExt($target, null, $referer, $userParams, null);
+        return $this->hitExt($target, null, $referer, $userParams, null);
     }
 
     // Внешняя ссылка
@@ -64,8 +65,11 @@ class YaMetrika {
         if ($url) {
             $modes = ['ln' => true, 'ut' => 'noindex'];
             $referer = $this->currentPageUrl();
-            $this->hitExt($url, $title, $referer, null, $modes);
+
+            return $this->hitExt($url, $title, $referer, null, $modes);
         }
+
+        return false;
     }
 
     // Загрузка файла
@@ -75,15 +79,19 @@ class YaMetrika {
             $currentUrl = $this->currentPageUrl();
             $modes = ['dl' => true, 'ln' => true];
             $file = $this->absoluteUrl($file, $currentUrl);
-            $this->hitExt($file, $title, $currentUrl, null, $modes);
+
+            return $this->hitExt($file, $title, $currentUrl, null, $modes);
         }
+
+        return false;
     }
 
     // Не отказ
     public function notBounce()
     {
         $modes = ['nb' => true];
-        $this->hitExt('', '', '', null, $modes);
+
+        return  $this->hitExt('', '', '', null, $modes);
     }
 
     // Параметры визитов
@@ -91,8 +99,11 @@ class YaMetrika {
     {
         if ($data) {
             $modes = ['pa' => true];
-            $this->hitExt('', '', '', $data, $modes);
+
+            return $this->hitExt('', '', '', $data, $modes);
         }
+
+        return false;
     }
 
     // Общий метод для отправки хитов
@@ -139,7 +150,6 @@ class YaMetrika {
 
         $postData['browser-info'] = implode(':', $browser_info);
 
-
         if ($userParams) {
             $up = json_encode($userParams);
             $postData['site-info'] = urlencode($up);
@@ -151,7 +161,7 @@ class YaMetrika {
 
         $getQuery = self::PATH . $this->counterId . '/1?rn=' . rand(0, 1000000) . '&wmode=2';
 
-        $this->postRequest(self::HOST, $getQuery, $this->buildQueryVars($postData));
+        return $this->postRequest(self::HOST, $getQuery, $this->buildQueryVars($postData));
     }
 
     // Текущий URL
@@ -205,7 +215,7 @@ class YaMetrika {
     {
         $dataLen = strlen($dataToSend);
 
-        $out  = 'POST ' . $path . ' HTTP/1.1\r\n';
+        $out = 'POST ' . $path . ' HTTP/1.1\r\n';
         $out .= 'Host: ' . $host . '\r\n';
         $out .= 'X-Forwarded-For: ' . $_SERVER['REMOTE_ADDR'] . '\r\n';
         $out .= 'User-Agent: ' . $_SERVER['HTTP_USER_AGENT'] . '\r\n';
@@ -221,12 +231,12 @@ class YaMetrika {
         try {
             $socket = @fsockopen('ssl://' . $host, self::PORT, $errno, $errstr, 3);
             if ($socket) {
-                if (!fwrite($socket, $out)) {
-                    throw new Exception('unable to write');
-                } else {
+                if (fwrite($socket, $out)) {
                     while ($in = @fgets($socket, 1024)) {
                         $result .= $in;
                     }
+                } else {
+                    throw new Exception('unable to write');
                 }
 
                 fclose($socket);
