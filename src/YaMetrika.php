@@ -2,41 +2,9 @@
 
 /*
     Author: Seleznev Denis, hcodes@yandex.ru
-    Description: Серверная отправка хитов с помощью PHP в Яндекс.Метрику
-    Version: 1.0.2
-    License: MIT, GNU PL
-
-    Примеры использования:
-    ======================
-
-    $counter = new YaMetrika(123456); // номер счётчика Метрики
-    $counter->hit(); // Значение URL и referer берутся по умолчанию из $_SERVER
-
-    // Отправка хита
-    $counter->hit('http://example.ru', 'Main page', 'http://ya.ru');
-    $counter->hit('/index.html', 'Main page', '/back.html');
-
-    // Отправка хита вместе с пользовательскими параметрами
-    $counter->hit('http://example.ru', 'Main page', 'http://ya.ru', $myParams);
-
-    // Отправка хита вместе с параметрами визитов и с запретом на индексацию
-    $counter->hit('http://example.ru', 'Main page', 'http://ya.ru', $myParams, 'noindex');
-
-    // Достижение цели
-    $counter->reachGoal('back');
-
-    // Внешняя ссылка - отчёт "Внешние ссылки"
-    $counter->extLink('http://yandex.ru');
-
-    // Загрузка файла - отчёт "Загрузка файлов"
-    $counter->file('http://example.ru/file.zip');
-    $counter->file('/file.zip');
-
-    // Отправка пользовательских параметров - отчёт "Параметры визитов"
-    $counter->params(array('level1' => array('level2' => 1)));
-
-    // Не отказ
-    $counter->notBounce();
+    Description: Server-side tracking of visitors using Yandex.Metrica
+    Repo: https://github.com/hcodes/server_yametrika/
+    License: MIT
 */
 
 class YaMetrika {
