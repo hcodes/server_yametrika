@@ -76,7 +76,8 @@ $counter->hit('https://mysite.org', 'Main page', 'https://ya.ru', $userParams, '
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
-// Внимание! Перед вызовом методов reachGoal должен вызван метод hit(...), чтобы была корректная привязка цели к визиту.
+// Внимание! Перед вызовом методов reachGoal должен вызван метод hit(...),
+// чтобы была корректная привязка цели к визиту.
 $counter->reachGoal('goal_name');
 
 // С параметрами визита.
