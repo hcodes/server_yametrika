@@ -1,4 +1,10 @@
-# Серверное отслеживание посетителей с помощью Яндекс.Метрики для PHP
+
+# server_yametrika
+![Packagist Version](https://img.shields.io/packagist/v/hcodes/server_yametrika)
+![Packagist Downloads](https://img.shields.io/packagist/dm/hcodes/server_yametrika)
+![Packagist License](https://img.shields.io/packagist/l/hcodes/server_yametrika)
+
+**Серверное отслеживание посетителей с помощью Яндекс.Метрики для PHP.**
 
 В некоторых случаях требуется отслеживать действия на стороне сервера без JavaScript.
 
