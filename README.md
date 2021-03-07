@@ -172,5 +172,5 @@ print $txt;
 + [Помощь Яндекс.Метрики](https://yandex.ru/support/metrica/)
 
 
-## Лицензия
+## [Лицензия](./LICENSE.md)
 MIT License
