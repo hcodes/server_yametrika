@@ -53,6 +53,7 @@ composer require hcodes/server_yametrika
 ### Посещение страницы
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики
@@ -85,6 +86,7 @@ $counter->hit(
 ### Достижение цели
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
@@ -99,6 +101,7 @@ $counter->reachGoal('goal_name', ['Param1' => 1, 'Param2' => 2]);
 ### Внешняя ссылка, отчёт «Внешние ссылки»
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
@@ -111,6 +114,7 @@ $counter->extLink('https://yandex.ru', 'Яндекс');
 ### Загрузка файла, отчёт «Загрузка файлов»
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
@@ -124,6 +128,7 @@ $counter->file('https://mysite.org/archive.zip', 'Архив рассылки');
 ### Отправка пользовательских параметров, отчёт «Параметры визитов»
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
@@ -134,6 +139,7 @@ $counter->params(['level1' => ['level2' => 1]]);
 ### Неотказ
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
@@ -145,6 +151,7 @@ $counter->notBounce();
 ### Какие программы используют посетители для чтения RSS?
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
@@ -156,6 +163,7 @@ $counter->params(['RSS' => ['User Agent' => $_SERVER['HTTP_USER_AGENT']]]);
 Добавляем в корневой .htaccess строку "RewriteRule ^robots.txt$ robots.php" и создаём в корне файл robots.php с содержанием:
 ```PHP
 <?php
+
 use ServerYaMetrika\YaMetrika;
 
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
