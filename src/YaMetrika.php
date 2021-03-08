@@ -253,7 +253,7 @@ class YaMetrika
             $postData['site-info'] = urlencode($up);
         }
 
-        if ($modes['ut']) {
+        if (isset($modes['ut'])) {
             $postData['ut'] = $modes['ut'];
         }
 
@@ -332,22 +332,22 @@ class YaMetrika
      */
     private function postRequest($host, $path, $data)
     {
-        $out = 'POST ' . $path . ' HTTP/1.1\n';
-        $out .= 'Host: ' . $host . '\n';
+        $out = "POST " . $path . " HTTP/1.1\n";
+        $out .= "Host: " . $host . "\n";
 
         $ip = $this->getServerParam('REMOTE_ADDR');
         if ($ip) {
-            $out .= 'X-Forwarded-For: ' . $ip . '\n';
+            $out .= "X-Forwarded-For: " . $ip . "\n";
         }
 
         $ua = $this->getServerParam('HTTP_USER_AGENT');
         if ($ua) {
-            $out .= 'User-Agent: ' . $ua . '\n';
+            $out .= "User-Agent: " . $ua . "\n";
         }
 
-        $out .= 'Content-type: application/x-www-form-urlencoded\n';
-        $out .= 'Content-length: ' . strlen($data) . '\n';
-        $out .= 'Connection: close\n\n';
+        $out .= "Content-type: application/x-www-form-urlencoded\n";
+        $out .= "Content-length: " . strlen($data) . "\n";
+        $out .= "Connection: close\n\n";
         $out .= $data;
 
         $errno = '';
