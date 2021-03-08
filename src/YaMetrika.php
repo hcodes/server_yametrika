@@ -37,7 +37,7 @@ class YaMetrika
     /**
      * Отправляет посещение страницы.
      *
-     * @param string|null $pageUrl     URL страницы
+     * @param string|null $pageUrl     Адрес страницы
      * @param string|null $pageTitle   Заголовок страницы
      * @param string|null $pageReferer Реферер
      * @param array|null  $userParams  Параметры визита
@@ -52,7 +52,7 @@ class YaMetrika
         $userParams = null,
         $ut = null
     ) {
-        $currentUrl = $this->currentPageUrl();
+        $currentUrl = $this->getCurrentPageUrl();
         $referer = $this->getServerParam('HTTP_REFERER');
 
         if (is_null($pageUrl)) {
@@ -63,8 +63,8 @@ class YaMetrika
             $pageReferer = $referer;
         }
 
-        $pageUrl = $this->absoluteUrl($pageUrl, $currentUrl);
-        $pageReferer = $this->absoluteUrl($pageReferer, $currentUrl);
+        $pageUrl = $this->getAbsoluteUrl($pageUrl, $currentUrl);
+        $pageReferer = $this->getAbsoluteUrl($pageReferer, $currentUrl);
 
         $modes = [];
 
@@ -92,11 +92,11 @@ class YaMetrika
     public function reachGoal($target = null, $userParams = null)
     {
         if (is_null($target)) {
-            $target = $this->currentPageUrl();
+            $target = $this->getCurrentPageUrl();
             $referer = $this->getServerParam('HTTP_REFERER');
         } else {
             $target = 'goal://' . $this->getServerParam('HTTP_HOST') . '/' . $target;
-            $referer = $this->currentPageUrl();
+            $referer = $this->getCurrentPageUrl();
         }
 
         return $this->hitExt($target, null, $referer, $userParams, null);
@@ -105,8 +105,8 @@ class YaMetrika
     /**
      * Отправляет внешнюю ссылку.
      *
-     * @param string $url   Внешняя ссылка
-     * @param string $title Заголовок ссылки
+     * @param string      $url   Внешняя ссылка
+     * @param string|null $title Заголовок ссылки
      *
      * @return bool Успешность отправки данных в Яндекс.Метрику
      */
@@ -114,7 +114,7 @@ class YaMetrika
     {
         if ($url) {
             $modes = ['ln' => true, 'ut' => 'noindex'];
-            $referer = $this->currentPageUrl();
+            $referer = $this->getCurrentPageUrl();
 
             return $this->hitExt($url, $title, $referer, null, $modes);
         }
@@ -125,17 +125,17 @@ class YaMetrika
     /**
      * Отправляет загрузку файла.
      *
-     * @param string $file  Ссылка на файл
-     * @param string $title Заголовок для файла
+     * @param string      $file  Ссылка на файл
+     * @param string|null $title Заголовок для файла
      *
      * @return bool Успешность отправки данных в Яндекс.Метрику
      */
     public function file($file, $title = null)
     {
         if ($file) {
-            $currentUrl = $this->currentPageUrl();
+            $currentUrl = $this->getCurrentPageUrl();
             $modes = ['dl' => true, 'ln' => true];
-            $file = $this->absoluteUrl($file, $currentUrl);
+            $file = $this->getAbsoluteUrl($file, $currentUrl);
 
             return $this->hitExt($file, $title, $currentUrl, null, $modes);
         }
@@ -152,7 +152,7 @@ class YaMetrika
     {
         $modes = ['nb' => true];
 
-        return $this->hitExt('', '', '', null, $modes);
+        return $this->hitExt(null, null, null, null, $modes);
     }
 
     /**
@@ -167,7 +167,7 @@ class YaMetrika
         if ($data) {
             $modes = ['pa' => true];
 
-            return $this->hitExt('', '', '', $data, $modes);
+            return $this->hitExt(null, null, null, $data, $modes);
         }
 
         return false;
@@ -217,20 +217,16 @@ class YaMetrika
             $postData['page-ref'] = urlencode($pageReferer);
         }
 
-        if (!$modes) {
+        if (is_null($modes)) {
             $modes = [];
         }
 
-        if ($modes) {
-            $modes['ar'] = true;
-        } else {
-            $modes = ['ar' => true];
-        }
+        $modes['ar'] = true;
 
         $browser_info = [];
         if ($modes && count($modes)) {
             foreach ($modes as $key => $value) {
-                if ($value and $key != 'ut') {
+                if ($value && $key != 'ut') {
                     if ($value === true) {
                         $value = 1;
                     }
@@ -272,19 +268,13 @@ class YaMetrika
      *
      * @return string
      */
-    private function currentPageUrl()
+    private function getCurrentPageUrl()
     {
-        $protocol = 'http://';
-
-        if ($this->getServerParam('HTTPS')) {
-            $protocol = 'https://';
-        }
-
+        $protocol = $this->getServerParam('HTTPS') ? 'https://' : 'http://';
         $host = $this->getServerParam('HTTP_HOST');
         $uri = $this->getServerParam('REQUEST_URI');
-        $pageUrl = $protocol . $host . $uri;
 
-        return $pageUrl;
+        return $host ? $protocol . $host . $uri : '';
     }
 
     /**
@@ -295,7 +285,7 @@ class YaMetrika
      *
      * @return string
      */
-    private function absoluteUrl($url, $baseUrl)
+    private function getAbsoluteUrl($url, $baseUrl)
     {
         if (!$url) {
             return '';
@@ -311,14 +301,14 @@ class YaMetrika
         $hostUrl = $base['scheme'] . '://' . $base['host'];
 
         if ($parseUrl['scheme']) {
-            $absUrl = $url;
+            $absoluteUrl = $url;
         } elseif ($parseUrl['host']) {
-            $absUrl = 'http://' . $url;
+            $absoluteUrl = 'http://' . $url;
         } else {
-            $absUrl = $hostUrl . $url;
+            $absoluteUrl = $hostUrl . $url;
         }
 
-        return $absUrl;
+        return $absoluteUrl;
     }
 
     /**
@@ -340,9 +330,9 @@ class YaMetrika
             $out .= "X-Forwarded-For: " . $ip . "\n";
         }
 
-        $ua = $this->getServerParam('HTTP_USER_AGENT');
-        if ($ua) {
-            $out .= "User-Agent: " . $ua . "\n";
+        $userAgent = $this->getServerParam('HTTP_USER_AGENT');
+        if ($userAgent) {
+            $out .= "User-Agent: " . $userAgent . "\n";
         }
 
         $out .= "Content-type: application/x-www-form-urlencoded\n";
