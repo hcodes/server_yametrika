@@ -11,12 +11,12 @@
             "homepage": "https://github.com/hcodes",
             "role": "Developer"
         }
-    ],  
+    ],
     "require": {
         "php": ">=5.6"
     },
-    "minimum-stability": "stable",
     "require-dev": {
+        "squizlabs/php_codesniffer": "*"
     },
     "autoload": {
         "psr-4": {
