@@ -12,6 +12,9 @@
             "role": "Developer"
         }
     ],
+    "scripts": {
+        "lint": "phpcs --standard=PSR12 ./src"
+    },
     "require": {
         "php": ">=5.6"
     },
