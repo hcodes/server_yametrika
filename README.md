@@ -21,7 +21,7 @@
 
 ## Возможности
 Серверная реализация сделана по аналогии с [JavaScript-реализацией](https://yandex.ru/support/metrica/code/counter-initialize.html).
-+ Загрузка страницы `hit()`
++ Посещение страницы `hit()`
 + Достижение цели `reachGoal()`
 + Внешняя ссылка `extLink()`
 + Загрузка файла `file()`
