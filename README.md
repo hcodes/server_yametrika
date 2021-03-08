@@ -43,6 +43,12 @@
 
 Уникальные посетители считаются по User Agent и IP-адресу.
 
+
+## Установка
+```bash
+composer require hcodes/server_yametrika
+```
+
 ## API
 ### Посещение страницы
 ```PHP
