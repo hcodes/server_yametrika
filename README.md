@@ -1,5 +1,5 @@
 
-# server_yametrika
+# hcodes/server_yametrika
 ![Packagist Version](https://img.shields.io/packagist/v/hcodes/server_yametrika)
 ![Packagist Downloads](https://img.shields.io/packagist/dm/hcodes/server_yametrika)
 ![Packagist License](https://img.shields.io/packagist/l/hcodes/server_yametrika)
