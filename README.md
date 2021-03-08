@@ -61,7 +61,8 @@ $counter = new YaMetrika(123456); // Номер счётчика Метрики
 $counter->hit(); // Значение URL и referer берутся по умолчанию из $_SERVER
 
 // Отправка хита с абсолютными урлами.
-$counter->hit('https://mysite.org', 'Main page', 'https://ya.ru'); // page_url, title, referer
+// page_url, title, referer
+$counter->hit('https://mysite.org', 'Main page', 'https://ya.ru');
 
 // Отправка хита с относительными урлами.
 $counter->hit('/index.html', 'Main page', '/back.html');
@@ -72,7 +73,13 @@ $counter->hit('https://mysite.org', 'Main page', 'https://ya.ru', $userParams);
 
 // Отправка хита вместе с параметрами визитов и с запретом на индексацию.
 $userParams = ['param' => 1, 'param2' => 2];
-$counter->hit('https://mysite.org', 'Main page', 'https://ya.ru', $userParams, 'noindex');
+$counter->hit(
+    'https://mysite.org',
+    'Main page',
+    'https://ya.ru',
+    $userParams,
+    'noindex'
+);
 ?>
 ```
 
