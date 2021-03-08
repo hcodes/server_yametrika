@@ -73,7 +73,7 @@ $userParams = ['param' => 1, 'param2' => 2];
 $counter->hit('https://mysite.org', 'Main page', 'https://ya.ru', $userParams);
 
 // Отправка хита вместе с параметрами визитов и с запретом на индексацию.
-$userParams = ['param' => 1, 'param2' => 2];
+$userParams = ['param1' => 1, 'param2' => 2];
 $counter->hit(
     'https://mysite.org',
     'Main page',
@@ -95,7 +95,7 @@ $counter = new YaMetrika(123456); // Номер счётчика Метрики.
 $counter->reachGoal('goal_name');
 
 // С параметрами визита.
-$counter->reachGoal('goal_name', ['Param1' => 1, 'Param2' => 2]);
+$counter->reachGoal('goal_name', ['param1' => 1, 'param2' => 2]);
 ```
 
 ### Внешняя ссылка, отчёт «Внешние ссылки»
