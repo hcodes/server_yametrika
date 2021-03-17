@@ -27,7 +27,7 @@
 + Загрузка файла `file()`
 + Параметры визита `params()`
 + Неотказ `notBounce()`
- 
+
 **Яндекс.Метрика принимает хиты только по https-протоколу, не забудьте проверить поддержку SSL в PHP.**
 
 ## Настройки счётчика Метрики
@@ -81,6 +81,8 @@ $counter->hit(
     $userParams,
     'noindex'
 );
+
+?>
 ```
 
 ### Достижение цели
@@ -96,6 +98,8 @@ $counter->reachGoal('goal_name');
 
 // С параметрами визита.
 $counter->reachGoal('goal_name', ['param1' => 1, 'param2' => 2]);
+
+?>
 ```
 
 ### Внешняя ссылка, отчёт «Внешние ссылки»
@@ -109,6 +113,8 @@ $counter->extLink('https://yandex.ru');
 
 // С названием ссылки.
 $counter->extLink('https://yandex.ru', 'Яндекс');
+
+?>
 ```
 
 ### Загрузка файла, отчёт «Загрузка файлов»
@@ -123,6 +129,8 @@ $counter->file('https://mysite.org/archive.zip');
 
 // С названием ссылки.
 $counter->file('https://mysite.org/archive.zip', 'Архив рассылки');
+
+?>
 ```
 
 ### Отправка пользовательских параметров, отчёт «Параметры визитов»
@@ -134,6 +142,8 @@ use ServerYaMetrika\YaMetrika;
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
 
 $counter->params(['level1' => ['level2' => 1]]);
+
+?>
 ```
 
 ### Неотказ
@@ -145,6 +155,8 @@ use ServerYaMetrika\YaMetrika;
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
 
 $counter->notBounce();
+
+?>
 ```
 
 ## Примеры применения
@@ -157,6 +169,8 @@ use ServerYaMetrika\YaMetrika;
 $counter = new YaMetrika(123456); // Номер счётчика Метрики.
 // Просмотр статистики в отчёте «Параметры визитов», ветка RSS → User Agent.
 $counter->params(['RSS' => ['User Agent' => $_SERVER['HTTP_USER_AGENT']]]);
+
+?>
 ```
 
 ### Слежка за роботами за скачкой robots.txt
@@ -178,6 +192,8 @@ header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 header('Content-Type: text/plain');
 
 print $txt;
+
+?>
 ```
 
 ## Полезные ссылки
