@@ -298,11 +298,14 @@ class YaMetrika
             return '';
         }
 
-        $hostUrl = $base['scheme'] . '://' . $base['host'];
+        $hostUrl = '';
+        if (isset($base['scheme']) && isset($base['host'])) {
+            $hostUrl = $base['scheme'] . '://' . $base['host'];
+        }
 
-        if ($parseUrl['scheme']) {
+        if (isset($parseUrl['scheme'])) {
             $absoluteUrl = $url;
-        } elseif ($parseUrl['host']) {
+        } elseif (isset($parseUrl['host'])) {
             $absoluteUrl = 'http://' . $url;
         } else {
             $absoluteUrl = $hostUrl . $url;
