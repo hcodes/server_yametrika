@@ -259,8 +259,26 @@ class YaMetrika
         return $this->postRequest(
             self::HOST,
             $getQuery,
-            http_build_query($postData)
+            $this->buildQueryParams($postData)
         );
+    }
+
+    /**
+     * Возвращает строку запроса.
+     *
+     * @param Array $params
+     *
+     * @return string
+     */
+    private function buildQueryParams($params)
+    {
+        $queryBits = [];
+
+        foreach ($params as $key => $value) {
+            $queryBits[] = $key . '=' . $value;
+        }
+
+        return (implode('&', $queryBits));
     }
 
     /**
