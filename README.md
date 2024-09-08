@@ -199,6 +199,7 @@ print $txt;
 ## Полезные ссылки
 + [Лёгкая Я.Метрика](https://github.com/hcodes/lyam/)
 + [Версия для Node.js](https://github.com/hcodes/server_yametrika_nodejs/)
++ [React/Preact-компонент для Яндекс Метрики](https://github.com/hcodes/react-metrika)
 + [Помощь Яндекс.Метрики](https://yandex.ru/support/metrica/)
 
 
